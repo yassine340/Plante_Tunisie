@@ -10,8 +10,7 @@ import lombok.*;
 public class Utilisateur  {
 @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nom;
-    private String prenom;
+    private String username;
     @Column(unique = true)
     private String email;
     private String role;
