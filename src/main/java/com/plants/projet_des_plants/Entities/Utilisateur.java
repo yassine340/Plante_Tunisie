@@ -16,5 +16,7 @@ public class Utilisateur  {
     private String role;
     private String password;
 
+    @OneToOne(mappedBy = "utilisateur")
+    private ForgetPassword forgetPassword;
 
 }

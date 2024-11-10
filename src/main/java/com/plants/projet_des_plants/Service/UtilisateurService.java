@@ -22,12 +22,9 @@ public class UtilisateurService {
     }
 
     public Utilisateur login(String email, String password) {
-        Utilisateur utilisateur = utilisateurRepository.findByEmail(email);
-
-        if (utilisateur != null && passwordEncoder.matches(password, utilisateur.getPassword())) {
-            return utilisateur;
-        }
-
-        return null;
+        return utilisateurRepository.findByEmail(email)
+                .filter(utilisateur -> passwordEncoder.matches(password, utilisateur.getPassword()))
+                .orElse(null);
     }
+
 }
