@@ -5,7 +5,9 @@ import com.plants.projet_des_plants.Entities.Produit;
 import com.plants.projet_des_plants.Repository.ProduitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +17,10 @@ public class ProduitService {
     private ProduitRepository produitRepository;
 
 
-    public Produit saveProduit(Produit produit) {
+    public Produit saveProduit(Produit produit, MultipartFile imageFile) throws IOException {
+        produit.setImageName(imageFile.getOriginalFilename());
+        produit.setImageType(imageFile.getContentType());
+        produit.setImageDate(imageFile.getBytes());
         return produitRepository.save(produit);
     }
 

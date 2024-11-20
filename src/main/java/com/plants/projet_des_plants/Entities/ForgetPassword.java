@@ -1,5 +1,6 @@
 package com.plants.projet_des_plants.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,6 +20,7 @@ public class ForgetPassword {
 
     private Date expirationTime;
     @OneToOne
+    @JsonIgnore
     private Utilisateur utilisateur;
 
 }

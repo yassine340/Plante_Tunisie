@@ -4,8 +4,10 @@ package com.plants.projet_des_plants.Web;
 import com.plants.projet_des_plants.Entities.Produit;
 import com.plants.projet_des_plants.Service.ProduitService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,10 +19,30 @@ public class ProduitController {
 
 
     @PostMapping("/ajoutProduit")
-    public ResponseEntity<Produit> createProduit(@RequestBody Produit produit) {
-        Produit createdProduit = produitService.saveProduit(produit);
-        return ResponseEntity.ok(createdProduit);
+    public ResponseEntity<Produit> createProduit(
+            @RequestPart("produit") Produit produit,
+            @RequestPart("Imageile") MultipartFile Imageile) {
+        try {
+            Produit createdProduit = produitService.saveProduit(produit, Imageile);
+            return ResponseEntity.ok(createdProduit);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
+
+
+    @GetMapping("/image/{productId}")
+    public ResponseEntity<byte[]> getImageByproductId(@PathVariable Long productId) {
+        Produit produit = produitService.getProduitById(productId);
+        if (produit != null && produit.getImageDate() != null) {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.valueOf(produit.getImageType()))
+                    .body(produit.getImageDate());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
 
     @GetMapping("/affiche/{id}")

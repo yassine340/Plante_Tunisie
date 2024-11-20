@@ -27,4 +27,7 @@ public class UtilisateurService {
                 .orElse(null);
     }
 
+    public Utilisateur getUtilisateurByEmail(String email) {
+        return utilisateurRepository.findByEmail(email).orElse(null);
+    }
 }
