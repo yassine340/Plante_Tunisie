@@ -1,11 +1,14 @@
 package com.plants.projet_des_plants.Web;
 
 import com.plants.projet_des_plants.Entities.Cart;
+import com.plants.projet_des_plants.Entities.DemandeCommande;
 import com.plants.projet_des_plants.Entities.Utilisateur;
 import com.plants.projet_des_plants.Service.CartService;
+import com.plants.projet_des_plants.Service.CommandeService;
 import com.plants.projet_des_plants.Service.UtilisateurService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
@@ -24,6 +27,19 @@ public class UtilisateurController {
 
     @Autowired
     private CartService cartService;
+    @Autowired
+private CommandeService commandeService;
+
+    @GetMapping("/byEmail")
+    public ResponseEntity<Utilisateur> getUserByEmail(@RequestParam String email) {
+        Utilisateur utilisateur = utilisateurService.getUtilisateurByEmail(email);
+        if (utilisateur != null) {
+            return ResponseEntity.ok(utilisateur);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
+
+
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Utilisateur utilisateur) {
@@ -43,15 +59,16 @@ public class UtilisateurController {
     }
 
     @PostMapping("/addCart")
-    public String addToCart(@RequestParam Long idProduit, @RequestParam Long idUtilisateur, HttpSession session) {
+    public ResponseEntity<?> addToCart(@RequestParam Long idProduit, @RequestParam Long idUtilisateur) {
         Cart saveCart = cartService.saveCart(idProduit, idUtilisateur);
         if (ObjectUtils.isEmpty(saveCart)) {
-            session.setAttribute("errorMsg", "Product not added to cart");
+            return ResponseEntity.status(400).body("Product not added to cart");
         } else {
-            session.setAttribute("successMsg", "Product added to cart");
+            return ResponseEntity.ok(saveCart);
         }
-        return "redirect:/login";
     }
+
+
 
     @GetMapping("/{idUtilisateur}/cart")
     public ResponseEntity<?> getCart(@PathVariable Long idUtilisateur) {
@@ -73,4 +90,16 @@ public class UtilisateurController {
         String email = p.getName();
         return utilisateurService.getUtilisateurByEmail(email);
     }
+    @GetMapping("/orders")
+    public String orderPage(){
+        return "/user/order";
+    }
+
+    @PostMapping("/save-commande")
+    public ResponseEntity<?> saveCommande(@RequestBody DemandeCommande request, @RequestParam Long idUtilisateur) {
+        // Appelle directement le service avec l'ID utilisateur
+        commandeService.saveCommande(idUtilisateur, request);
+        return ResponseEntity.ok("Commande enregistrée avec succès");
+    }
+
 }

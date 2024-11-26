@@ -30,4 +30,8 @@ public class UtilisateurService {
     public Utilisateur getUtilisateurByEmail(String email) {
         return utilisateurRepository.findByEmail(email).orElse(null);
     }
+    // Nouvelle méthode pour récupérer un utilisateur par ID
+    public Utilisateur getUtilisateurById(Long id) {
+        return utilisateurRepository.findById(id).orElse(null);
+    }
 }
